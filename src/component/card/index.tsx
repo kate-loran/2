@@ -12,7 +12,7 @@ const Card = ({
   return <Wrapper borderRadius={borderRadius}>{children}</Wrapper>;
 };
 
-const Wrapper = styled.div<{ borderRadius: string }>`
+const Wrapper = styled.div<Pick<Props, "borderRadius">>`
   border-radius: ${({ borderRadius }) => borderRadius};
   padding: 15px;
   box-shadow: 0 -1px 10px 0 #0c2a6a33;

@@ -17,7 +17,7 @@ const Button = ({ title, onClick, disabled = false }: Props) => {
   );
 };
 
-const Wrapper = styled.div<{ disabled: boolean }>`
+const Wrapper = styled.div<Pick<Props, "disabled">>`
   display: flex;
   align-items: center;
   justify-content: center;
