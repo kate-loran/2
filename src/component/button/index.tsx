@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Typography from "../typography";
 
 interface Props {
   title: string;
@@ -9,7 +10,9 @@ interface Props {
 const Button = ({ title, onClick, disabled = false }: Props) => {
   return (
     <Wrapper onClick={onClick} disabled={disabled}>
-      {title}
+      <Typography fontSize={15} color={"white"}>
+        {title}
+      </Typography>
     </Wrapper>
   );
 };
@@ -18,7 +21,6 @@ const Wrapper = styled.div<{ disabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   width: 100%;
   height: 56px;
   border-radius: 28px;

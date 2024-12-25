@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import BackArrow from "../../assets/icons/backArrow.tsx";
+import Typography from "../typography";
 
 interface Props {
   title: string;
@@ -14,7 +15,9 @@ const Header = ({ title, onBack }: Props) => {
           <BackArrow />
         </ArrowWrapper>
       )}
-      <span>{title}</span>
+      <Typography fontSize={17} color={"white"}>
+        {title}
+      </Typography>
     </Wrapper>
   );
 };
