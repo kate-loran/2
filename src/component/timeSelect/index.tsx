@@ -10,6 +10,9 @@ const TimeSelect = ({ list, value, onChange }: Props) => {
   return (
     <Wrapper>
       <select value={value} onChange={(e) => onChange(e.target.value)}>
+        <option selected value={undefined} hidden={true}>
+          __:__
+        </option>
         {list.map((item) => (
           <option key={item.value} value={item.value}>
             {item.label}

@@ -11,6 +11,8 @@ import Checkbox from "../../component/checkbox";
 import styled from "styled-components";
 import TimeSelect from "../../component/timeSelect";
 import { generateTimeSlots } from "../../utils/generateTimeSlots.ts";
+import { useDayCreateUpdate } from "../../hooks/useDayCreateUpdate.ts";
+import { getServerFormatDate } from "../../utils/getServerFormatDate.ts";
 
 const AdminEditPage = () => {
   const navigate = useNavigate();
@@ -19,6 +21,33 @@ const AdminEditPage = () => {
   const [nonWorkingDay, setNonWorkingDay] = useState<boolean>(false);
   const [timeFrom, setTimeFrom] = useState<string>();
   const [timeTo, setTimeTo] = useState<string>();
+
+  const enabledButton = nonWorkingDay || (timeFrom && timeTo);
+
+  const { dayCreateUpdateMutation } = useDayCreateUpdate();
+
+  const onSave = async () => {
+    try {
+      if (selectedData) {
+        const slots = generateTimeSlots({ from: timeFrom, to: timeTo });
+        await dayCreateUpdateMutation.mutateAsync({
+          id: undefined,
+          data: {
+            date: getServerFormatDate(selectedData) || "",
+            slots: nonWorkingDay
+              ? []
+              : slots.map((time) => ({
+                  time,
+                  available: true,
+                })),
+          },
+        });
+        navigate(routes.admin.path);
+      }
+    } catch (e) {
+      //
+    }
+  };
 
   return (
     <>
@@ -80,7 +109,11 @@ const AdminEditPage = () => {
         )}
       </ContentLayout>
       <Card borderRadius={"35px 35px 0 0"}>
-        <Button title={"Сохранить"} onClick={() => null} disabled={true} />
+        <Button
+          title={"Сохранить"}
+          onClick={onSave}
+          disabled={!enabledButton}
+        />
       </Card>
     </>
   );
