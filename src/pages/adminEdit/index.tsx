@@ -93,7 +93,10 @@ const AdminEditPage = () => {
                     </Typography>
                     <TimeSelect
                       value={timeTo}
-                      list={generateTimeSlots({ from: timeFrom })
+                      list={generateTimeSlots({
+                        from: timeFrom,
+                        isToDateList: !!timeFrom,
+                      })
                         .map((el) => ({
                           value: el,
                           label: el,
