@@ -100,7 +100,7 @@ const AdminEditPage = () => {
             selectedDate={selectedDate}
             onSelect={(e) => {
               setSelectedDate(e);
-              const meta = data?.data?.find(
+              const meta = data?.find(
                 (el: DayInterface) => el.date === getServerFormatDate(e),
               );
               if (meta) {
