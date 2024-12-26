@@ -119,18 +119,28 @@ interface Props {
   maxDate?: Date;
   minDate?: Date;
   onSelect?: (date: Date) => void;
+  setCurrentDate?: (date: Date) => void;
 }
 
 const Calendar = ({
-  selectedDate = d,
+  selectedDate,
   maxDate = defaultMaxDate,
   minDate = defaultMinDate,
   onSelect,
+  setCurrentDate,
 }: Props) => {
-  const [curDate, setCurDate] = useState<Date>(selectedDate);
+  const [curDate, setCurDate] = useState<Date>(selectedDate || d);
 
   useEffect(() => {
-    setCurDate(selectedDate);
+    if (setCurrentDate) {
+      setCurrentDate(curDate);
+    }
+  }, [curDate]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      setCurDate(selectedDate);
+    }
   }, [selectedDate]);
 
   const fillValues = () => {
@@ -185,24 +195,28 @@ const Calendar = ({
     const handleClick = (item: ICalendarItem) => onSelect && onSelect(item.day);
 
     return days.map((item: ICalendarItem) => {
+      let opacity = 1;
+      if (!item.isCurrentMonth) {
+        opacity = 0;
+      }
+      let color = "#0D275E";
+      if (item.isSelected) {
+        color = "white";
+      } else if (item.isHoliday) {
+        color = "#9E1111";
+      }
+      const disabled = item.disabled || !item.isCurrentMonth;
       return (
-        <DayCell
+        <Cell
           key={`row-${item.row}-col-${item.weekday}`}
-          onClick={() => (item.disabled ? null : handleClick(item))}
-          isToday={item.isToday}
+          onClick={() => (disabled ? null : handleClick(item))}
+          clickable={!disabled}
           isSelected={item.isSelected}
-          isCurrentMonth={item.isCurrentMonth}
-          disabled={item.disabled}
-          isHoliday={item.isHoliday}
         >
-          <Typography
-            color={"#0D275E"}
-            fontSize={16}
-            opacity={!item.isCurrentMonth || item.isHoliday ? 0.25 : 1}
-          >
+          <Typography color={color} fontSize={16} opacity={opacity}>
             {format(item.day, "d")}
           </Typography>
-        </DayCell>
+        </Cell>
       );
     });
   };
@@ -211,7 +225,7 @@ const Calendar = ({
     const arr = [];
     for (let i = 1; i <= 7; i += 1) {
       arr.push(
-        <Cell key={`weekday-${i}`}>
+        <Cell key={`weekday-${i}`} isSelected={false}>
           <Typography color={"#0D275E"} fontSize={16}>
             {renderDayOfWeek(i)}
           </Typography>
@@ -291,20 +305,29 @@ const ArrowButton = styled.div`
   cursor: pointer;
 `;
 
-const Cell = styled.div`
+const Cell = styled.div<
+  Pick<ICalendarItem, "isSelected"> & { clickable?: boolean }
+>`
   display: flex;
   border-radius: 50%;
   width: 44px;
   height: 44px;
   align-items: center;
   justify-content: center;
+  ${({ clickable }) => {
+    if (clickable) {
+      return {
+        cursor: "pointer",
+      };
+    }
+  }}
+  ${({ isSelected }) => {
+    if (isSelected) {
+      return {
+        background: "#113D9E",
+      };
+    }
+  }}
 `;
-
-const DayCell = styled(Cell)<
-  Pick<
-    ICalendarItem,
-    "isToday" | "isSelected" | "isCurrentMonth" | "disabled" | "isHoliday"
-  >
->``;
 
 export default Calendar;

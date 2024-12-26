@@ -15,9 +15,9 @@ const ShortArrow = ({ rotate = 0 }: Props) => {
       <path
         d="M5.625 10.375L1.25 6L5.625 1.625"
         stroke="#0C2A6A"
-        stroke-width="1.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

@@ -16,16 +16,16 @@ const LongArrow = ({ rotate = 0, color = "#113D9E" }: Props) => {
       <path
         d="M7.17786 13.5523L2.62536 8.99977L7.17786 4.44727"
         stroke={color}
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M15.3748 9L2.75226 9"
         stroke={color}
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

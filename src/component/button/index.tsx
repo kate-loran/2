@@ -26,7 +26,11 @@ const Wrapper = styled.div<Pick<Props, "disabled">>`
   border-radius: 28px;
   background: #0c2a6a;
   cursor: pointer;
-  ${({ disabled }) => (disabled ? 0.75 : 1)}
+  ${({ disabled }) => {
+    if (disabled) {
+      return { opacity: 0.75, pointerEvents: "none" };
+    }
+  }}
 `;
 
 export default Button;
