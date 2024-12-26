@@ -30,7 +30,7 @@ const AdminEditPage = () => {
   const { data } = useGetDaysPeriod(getStartEndOfMonth(currentDate));
 
   const availableDates = getAvailableDates({
-    dates: data?.data as DayInterface[],
+    dates: data as DayInterface[],
   });
 
   const [selectedDate, setSelectedDate] = useState<Date>();

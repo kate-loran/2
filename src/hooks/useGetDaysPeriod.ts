@@ -21,5 +21,5 @@ export const useGetDaysPeriod = ({ from, to }: { from?: Date; to?: Date }) => {
     enabled: !!date1 && !!date2,
   });
 
-  return { data, isLoading };
+  return { data: data?.data, isLoading };
 };

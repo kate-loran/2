@@ -19,5 +19,5 @@ export const useGetDayDetails = ({ date }: { date?: Date }) => {
     enabled: !!dateString,
   });
 
-  return { data, isLoading };
+  return { data: data?.data?.[0], isLoading };
 };
