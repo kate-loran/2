@@ -18,6 +18,7 @@ import {
 } from "date-fns";
 import { ru } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
+import { getServerFormatDate } from "../../utils/getServerFormatDate.ts";
 
 interface ICalendarItem {
   // сама дата
@@ -38,6 +39,8 @@ interface ICalendarItem {
   isAfter: boolean;
   // это выходной
   isHoliday: boolean;
+  // дата строкой
+  // dateString: string;
 }
 
 interface IFillDateProps {
@@ -90,6 +93,8 @@ const fillDate = ({
     isAfter: isAfter(day, new Date()),
     //
     isHoliday: [6, 7].includes(weekday),
+    //
+    dateString: getServerFormatDate(day),
   };
 };
 
@@ -120,6 +125,7 @@ interface Props {
   minDate?: Date;
   onSelect?: (date: Date) => void;
   setCurrentDate?: (date: Date) => void;
+  availableDates?: string[];
 }
 
 const Calendar = ({
@@ -128,6 +134,7 @@ const Calendar = ({
   minDate = defaultMinDate,
   onSelect,
   setCurrentDate,
+  availableDates,
 }: Props) => {
   const [curDate, setCurDate] = useState<Date>(selectedDate || d);
 
@@ -194,10 +201,12 @@ const Calendar = ({
 
     const handleClick = (item: ICalendarItem) => onSelect && onSelect(item.day);
 
-    return days.map((item: ICalendarItem) => {
+    return days.map((item: any) => {
       let opacity = 1;
       if (!item.isCurrentMonth) {
         opacity = 0;
+      } else if (availableDates) {
+        opacity = availableDates.includes(item.dateString) ? 1 : 0.25;
       }
       let color = "#0D275E";
       if (item.isSelected) {

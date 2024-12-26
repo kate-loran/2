@@ -8,6 +8,8 @@ import { routes } from "../../config/routes.ts";
 import { useState } from "react";
 import { useGetDaysPeriod } from "../../hooks/useGetDaysPeriod.ts";
 import { getStartEndOfMonth } from "../../utils/getStartEndOfMonth.ts";
+import { getAvailableDates } from "../../utils/getAvailableDates.ts";
+import { DayInterface } from "../../config/types.ts";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -15,12 +17,21 @@ const AdminPage = () => {
 
   const { data } = useGetDaysPeriod(getStartEndOfMonth(currentDate));
 
+  const availableDates = getAvailableDates({
+    dates: data?.data as DayInterface[],
+  });
+
+  console.log(availableDates);
+
   return (
     <>
       <Header title={"График записей"} />
       <ContentLayout>
         <Card>
-          <Calendar setCurrentDate={setCurrentDate} />
+          <Calendar
+            setCurrentDate={setCurrentDate}
+            availableDates={availableDates}
+          />
         </Card>
       </ContentLayout>
       <Card borderRadius={"35px 35px 0 0"}>

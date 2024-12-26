@@ -6,7 +6,7 @@ import Button from "../../component/button";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../config/routes.ts";
 import Typography from "../../component/typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Checkbox from "../../component/checkbox";
 import styled from "styled-components";
 import TimeSelect from "../../component/timeSelect";
@@ -17,10 +17,16 @@ import { getServerFormatDate } from "../../utils/getServerFormatDate.ts";
 const AdminEditPage = () => {
   const navigate = useNavigate();
 
-  const [selectedData, setSelectedData] = useState<Date>();
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [nonWorkingDay, setNonWorkingDay] = useState<boolean>(false);
-  const [timeFrom, setTimeFrom] = useState<string>();
-  const [timeTo, setTimeTo] = useState<string>();
+  const [timeFrom, setTimeFrom] = useState<string | undefined>();
+  const [timeTo, setTimeTo] = useState<string | undefined>();
+
+  useEffect(() => {
+    setNonWorkingDay(false);
+    setTimeFrom(undefined);
+    setTimeTo(undefined);
+  }, [selectedDate]);
 
   const enabledButton = nonWorkingDay || (timeFrom && timeTo);
 
@@ -28,12 +34,12 @@ const AdminEditPage = () => {
 
   const onSave = async () => {
     try {
-      if (selectedData) {
+      if (selectedDate) {
         const slots = generateTimeSlots({ from: timeFrom, to: timeTo });
         await dayCreateUpdateMutation.mutateAsync({
           id: undefined,
           data: {
-            date: getServerFormatDate(selectedData) || "",
+            date: getServerFormatDate(selectedDate) || "",
             slots: nonWorkingDay
               ? []
               : slots.map((time) => ({
@@ -62,9 +68,9 @@ const AdminEditPage = () => {
           </Typography>
         </Card>
         <Card>
-          <Calendar selectedDate={selectedData} onSelect={setSelectedData} />
+          <Calendar selectedDate={selectedDate} onSelect={setSelectedDate} />
         </Card>
-        {selectedData && (
+        {selectedDate && (
           <>
             <Checkbox
               value={nonWorkingDay}
