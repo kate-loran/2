@@ -8,12 +8,17 @@ import { routes } from "../../config/routes.ts";
 import Typography from "../../component/typography";
 import { useState } from "react";
 import Checkbox from "../../component/checkbox";
+import styled from "styled-components";
+import TimeSelect from "../../component/timeSelect";
+import { generateTimeSlots } from "../../utils/generateTimeSlots.ts";
 
 const AdminEditPage = () => {
   const navigate = useNavigate();
 
   const [selectedData, setSelectedData] = useState<Date>();
   const [nonWorkingDay, setNonWorkingDay] = useState<boolean>(false);
+  const [timeFrom, setTimeFrom] = useState<string>();
+  const [timeTo, setTimeTo] = useState<string>();
 
   return (
     <>
@@ -37,6 +42,38 @@ const AdminEditPage = () => {
               onChange={setNonWorkingDay}
               label={"Нерабочий день"}
             />
+            {!nonWorkingDay && (
+              <>
+                <Row>
+                  <TimeWrapper>
+                    <Typography color={"#0C2A6A"} fontSize={16}>
+                      с
+                    </Typography>
+                    <TimeSelect
+                      value={timeFrom}
+                      list={generateTimeSlots({ to: timeTo }).map((el) => ({
+                        value: el,
+                        label: el,
+                      }))}
+                      onChange={setTimeFrom}
+                    />
+                  </TimeWrapper>
+                  <TimeWrapper>
+                    <Typography color={"#0C2A6A"} fontSize={16}>
+                      по
+                    </Typography>
+                    <TimeSelect
+                      value={timeTo}
+                      list={generateTimeSlots({ from: timeFrom }).map((el) => ({
+                        value: el,
+                        label: el,
+                      }))}
+                      onChange={setTimeTo}
+                    />
+                  </TimeWrapper>
+                </Row>
+              </>
+            )}
           </>
         )}
       </ContentLayout>
@@ -46,5 +83,17 @@ const AdminEditPage = () => {
     </>
   );
 };
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const TimeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
 
 export default AdminEditPage;
