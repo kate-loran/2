@@ -64,10 +64,12 @@ const AdminEditPage = () => {
                     </Typography>
                     <TimeSelect
                       value={timeTo}
-                      list={generateTimeSlots({ from: timeFrom }).map((el) => ({
-                        value: el,
-                        label: el,
-                      }))}
+                      list={generateTimeSlots({ from: timeFrom })
+                        .map((el) => ({
+                          value: el,
+                          label: el,
+                        }))
+                        .slice(timeFrom ? 1 : 0)}
                       onChange={setTimeTo}
                     />
                   </TimeWrapper>

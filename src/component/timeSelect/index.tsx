@@ -31,6 +31,10 @@ const Wrapper = styled.div`
     width: 133px;
     border: none;
     border-radius: 20px;
+
+    text-align: center;
+    font-size: 16px;
+    color: #0c2a6a;
   }
 `;
 
