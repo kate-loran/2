@@ -7,4 +7,7 @@ export const routes: { [key: string]: RouteInterface } = {
   adminEdit: {
     path: "/adminEdit",
   },
+  adminRecordsToday: {
+    path: "/adminRecordsToday",
+  },
 };
