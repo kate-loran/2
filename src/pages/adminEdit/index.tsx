@@ -6,46 +6,74 @@ import Button from "../../component/button";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../config/routes.ts";
 import Typography from "../../component/typography";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Checkbox from "../../component/checkbox";
 import styled from "styled-components";
 import TimeSelect from "../../component/timeSelect";
-import { generateTimeSlots } from "../../utils/generateTimeSlots.ts";
+import {
+  generateTimeSlots,
+  handleDateSetTime,
+} from "../../utils/generateTimeSlots.ts";
 import { useDayCreateUpdate } from "../../hooks/useDayCreateUpdate.ts";
 import { getServerFormatDate } from "../../utils/getServerFormatDate.ts";
+import { useGetDaysPeriod } from "../../hooks/useGetDaysPeriod.ts";
+import { getStartEndOfMonth } from "../../utils/getStartEndOfMonth.ts";
+import { getAvailableDates } from "../../utils/getAvailableDates.ts";
+import { DayInterface } from "../../config/types.ts";
+import { addMinutes, format } from "date-fns";
 
 const AdminEditPage = () => {
   const navigate = useNavigate();
 
+  const [currentDate, setCurrentDate] = useState<Date>();
+
+  const { data } = useGetDaysPeriod(getStartEndOfMonth(currentDate));
+
+  const availableDates = getAvailableDates({
+    dates: data?.data as DayInterface[],
+  });
+
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [nonWorkingDay, setNonWorkingDay] = useState<boolean>(false);
-  const [timeFrom, setTimeFrom] = useState<string | undefined>();
-  const [timeTo, setTimeTo] = useState<string | undefined>();
+  const [formValues, setFormValues] = useState<{
+    nonWorkingDay: boolean;
+    timeFrom?: string;
+    timeTo?: string;
+  }>({
+    nonWorkingDay: false,
+    timeFrom: undefined,
+    timeTo: undefined,
+  });
+  const [selectedMeta, setSelectedMeta] = useState<
+    (DayInterface & { id: number }) | undefined
+  >();
 
-  useEffect(() => {
-    setNonWorkingDay(false);
-    setTimeFrom(undefined);
-    setTimeTo(undefined);
-  }, [selectedDate]);
-
-  const enabledButton = nonWorkingDay || (timeFrom && timeTo);
+  const enabledButton =
+    formValues.nonWorkingDay || (formValues.timeFrom && formValues.timeTo);
 
   const { dayCreateUpdateMutation } = useDayCreateUpdate();
 
   const onSave = async () => {
     try {
       if (selectedDate) {
-        const slots = generateTimeSlots({ from: timeFrom, to: timeTo });
+        const slots = generateTimeSlots({
+          from: formValues.timeFrom,
+          to: formValues.timeTo,
+        });
         await dayCreateUpdateMutation.mutateAsync({
-          id: undefined,
+          id: selectedMeta?.id,
           data: {
             date: getServerFormatDate(selectedDate) || "",
-            slots: nonWorkingDay
+            slots: formValues.nonWorkingDay
               ? []
-              : slots.map((time) => ({
-                  time,
-                  available: true,
-                })),
+              : slots.map((time) => {
+                  const available =
+                    selectedMeta?.slots?.find((el) => el.time === time)
+                      ?.available || true;
+                  return {
+                    time,
+                    available,
+                  };
+                }),
           },
         });
         navigate(routes.admin.path);
@@ -68,16 +96,49 @@ const AdminEditPage = () => {
           </Typography>
         </Card>
         <Card>
-          <Calendar selectedDate={selectedDate} onSelect={setSelectedDate} />
+          <Calendar
+            selectedDate={selectedDate}
+            onSelect={(e) => {
+              setSelectedDate(e);
+              const meta = data?.data?.find(
+                (el: DayInterface) => el.date === getServerFormatDate(e),
+              );
+              if (meta) {
+                const firstDay = meta.slots[0];
+                const lastDay = meta.slots[meta.slots.length - 1];
+                const lastDayDate = addMinutes(
+                  handleDateSetTime(lastDay.time),
+                  15,
+                );
+                setFormValues({
+                  nonWorkingDay: meta.slots.length === 0,
+                  timeFrom: firstDay.time,
+                  timeTo: format(lastDayDate, "HH:mm"),
+                });
+                setSelectedMeta(meta);
+              } else {
+                setFormValues({
+                  nonWorkingDay: false,
+                  timeFrom: undefined,
+                  timeTo: undefined,
+                });
+                setSelectedMeta(undefined);
+              }
+            }}
+            setCurrentDate={setCurrentDate}
+            availableDates={availableDates}
+          />
         </Card>
         {selectedDate && (
           <>
             <Checkbox
-              value={nonWorkingDay}
-              onChange={setNonWorkingDay}
+              value={formValues.nonWorkingDay}
+              onChange={(nonWorkingDay) =>
+                setFormValues((state) => ({ ...state, nonWorkingDay }))
+              }
               label={"Нерабочий день"}
             />
-            {!nonWorkingDay && (
+            {!formValues.nonWorkingDay && (
               <>
                 <Row>
                   <TimeWrapper>
@@ -85,12 +146,16 @@ const AdminEditPage = () => {
                       с
                     </Typography>
                     <TimeSelect
-                      value={timeFrom}
-                      list={generateTimeSlots({ to: timeTo }).map((el) => ({
-                        value: el,
-                        label: el,
-                      }))}
-                      onChange={setTimeFrom}
+                      value={formValues.timeFrom}
+                      list={generateTimeSlots({ to: formValues.timeTo }).map(
+                        (el) => ({
+                          value: el,
+                          label: el,
+                        }),
+                      )}
+                      onChange={(timeFrom) =>
+                        setFormValues((state) => ({ ...state, timeFrom }))
+                      }
                     />
                   </TimeWrapper>
                   <TimeWrapper>
@@ -98,17 +163,19 @@ const AdminEditPage = () => {
                       по
                     </Typography>
                     <TimeSelect
-                      value={timeTo}
+                      value={formValues.timeTo}
                       list={generateTimeSlots({
-                        from: timeFrom,
-                        isToDateList: !!timeFrom,
+                        from: formValues.timeFrom,
+                        isToDateList: !!formValues.timeFrom,
                       })
                         .map((el) => ({
                           value: el,
                           label: el,
                         }))
-                        .slice(timeFrom ? 1 : 0)}
-                      onChange={setTimeTo}
+                        .slice(formValues.timeFrom ? 1 : 0)}
+                      onChange={(timeTo) =>
+                        setFormValues((state) => ({ ...state, timeTo }))
+                      }
                     />
                   </TimeWrapper>
                 </Row>

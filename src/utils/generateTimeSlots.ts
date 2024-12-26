@@ -10,7 +10,7 @@ import {
   isSameDay,
 } from "date-fns";
 
-const handleTime = (time: string) => {
+export const handleDateSetTime = (time: string) => {
   const timeArr = time.split(":");
   return setHours(
     setMinutes(setSeconds(new Date(), 0), Number(timeArr[1])),
@@ -29,9 +29,9 @@ export const generateTimeSlots = ({
   step?: number;
   isToDateList?: boolean;
 }) => {
-  const fromAbstractDate = handleTime(from || "00:00");
+  const fromAbstractDate = handleDateSetTime(from || "00:00");
   let toAbstractDate = to
-    ? handleTime(to)
+    ? handleDateSetTime(to)
     : startOfDay(addDays(fromAbstractDate, 1));
   if (to === "00:00") {
     toAbstractDate = addDays(fromAbstractDate, 1);

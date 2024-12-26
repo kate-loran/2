@@ -21,8 +21,6 @@ const AdminPage = () => {
     dates: data?.data as DayInterface[],
   });
 
-  console.log(availableDates);
-
   return (
     <>
       <Header title={"График записей"} />
