@@ -49,8 +49,7 @@ const MainPage = () => {
       });
       navigate(routes.success.path, { state: { selectedTime, selectedDate } });
     } catch (e) {
-      // todo
-      navigate(routes.success.path, { state: { selectedTime, selectedDate } });
+      //
     }
   };
 

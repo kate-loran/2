@@ -7,13 +7,30 @@ import SuccessImage from "../../assets/icons/successImage.tsx";
 import Typography from "../../component/typography";
 import { ru } from "date-fns/locale";
 import { format } from "date-fns";
+import { useEffect, useRef } from "react";
+import { toPng } from "html-to-image";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location);
+
+  const ref = useRef();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await toPng(ref.current);
+      const a = document.createElement("a");
+      a.href = res;
+      a.download = `запись.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <SuccessImage />
       <Typography
         color={"white"}
