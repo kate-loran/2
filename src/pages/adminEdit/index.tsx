@@ -91,7 +91,7 @@ const AdminEditPage = () => {
       <ContentLayout>
         <Card>
           <Typography color={"#0D275E"} fontSize={16} textAlign={"center"}>
-            Выберите день для настройки особого расписания
+            Выберите день для настройки особого 123 расписания
           </Typography>
         </Card>
         <Card>
