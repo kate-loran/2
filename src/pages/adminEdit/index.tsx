@@ -62,6 +62,9 @@ const AdminEditPage = () => {
         await dayCreateUpdateMutation.mutateAsync({
           id: selectedMeta?.id,
           data: {
+            date: (selectedMeta?.id
+              ? selectedMeta.date
+              : getServerFormatDate(selectedDate)) as string,
             slots: formValues.nonWorkingDay
               ? []
               : slots.map((time) => {
@@ -103,17 +106,25 @@ const AdminEditPage = () => {
                 (el: DayInterface) => el.date === getServerFormatDate(e),
               );
               if (meta) {
-                const firstDay = meta.slots[0];
-                const lastDay = meta.slots[meta.slots.length - 1];
-                const lastDayDate = addMinutes(
-                  handleDateSetTime(lastDay.time),
-                  15,
-                );
-                setFormValues({
-                  nonWorkingDay: meta.slots.length === 0,
-                  timeFrom: firstDay.time,
-                  timeTo: format(lastDayDate, "HH:mm"),
-                });
+                if (meta.slots.length === 0) {
+                  setFormValues({
+                    nonWorkingDay: true,
+                    timeFrom: undefined,
+                    timeTo: undefined,
+                  });
+                } else {
+                  const firstDay = meta.slots[0];
+                  const lastDay = meta.slots[meta.slots.length - 1];
+                  const lastDayDate = addMinutes(
+                    handleDateSetTime(lastDay.time),
+                    15,
+                  );
+                  setFormValues({
+                    nonWorkingDay: meta.slots.length === 0,
+                    timeFrom: firstDay.time,
+                    timeTo: format(lastDayDate, "HH:mm"),
+                  });
+                }
                 setSelectedMeta(meta);
               } else {
                 setFormValues({

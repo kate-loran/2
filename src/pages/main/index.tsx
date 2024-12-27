@@ -33,23 +33,22 @@ const MainPage = () => {
 
   const onSave = async () => {
     try {
-      const data = {
-        date: selectedMeta?.id
-          ? selectedMeta.date
-          : getServerFormatDate(selectedDate),
-        slots: (selectedMeta?.slots || []).map((slot) => {
-          if (slot.time === selectedTime) {
-            return {
-              ...slot,
-              available: false,
-            };
-          }
-          return slot;
-        }),
-      } as any;
       await dayCreateUpdateMutation.mutateAsync({
         id: selectedMeta?.id,
-        data,
+        data: {
+          date: (selectedMeta?.id
+            ? selectedMeta.date
+            : getServerFormatDate(selectedDate)) as string,
+          slots: (selectedMeta?.slots || []).map((slot) => {
+            if (slot.time === selectedTime) {
+              return {
+                ...slot,
+                available: false,
+              };
+            }
+            return slot;
+          }),
+        },
       });
       navigate(routes.success.path, { state: { selectedTime, selectedDate } });
     } catch (e) {
