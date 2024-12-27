@@ -62,7 +62,6 @@ const AdminEditPage = () => {
         await dayCreateUpdateMutation.mutateAsync({
           id: selectedMeta?.id,
           data: {
-            date: getServerFormatDate(selectedDate) || "",
             slots: formValues.nonWorkingDay
               ? []
               : slots.map((time) => {

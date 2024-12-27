@@ -1,6 +1,9 @@
 import { RouteInterface } from "./types.ts";
 
 export const routes: { [key: string]: RouteInterface } = {
+  main: {
+    path: "/",
+  },
   admin: {
     path: "/admin",
   },
@@ -9,5 +12,8 @@ export const routes: { [key: string]: RouteInterface } = {
   },
   adminRecordsToday: {
     path: "/adminRecordsToday",
+  },
+  success: {
+    path: "/success",
   },
 };
