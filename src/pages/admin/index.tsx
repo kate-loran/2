@@ -59,7 +59,7 @@ const AdminPage = () => {
                 </Typography>
               </RecordsInfo>
               {recordsCount ? (
-                <Circle>
+                <Circle onClick={() => navigate(routes.adminRecordsToday.path)}>
                   <LongArrow color={"white"} rotate={180} />
                 </Circle>
               ) : null}
