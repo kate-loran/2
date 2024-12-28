@@ -92,25 +92,31 @@ const MainPage = () => {
               </Typography>
             </Card>
             <Card>
-              <Grid>
-                {availableSlots.map((slot) => {
-                  const selected = slot.time === selectedTime;
-                  return (
-                    <TimeElement
-                      key={`time-${slot.time}`}
-                      onClick={() => setSelectedTime(slot.time)}
-                      selected={selected}
-                    >
-                      <Typography
-                        color={selected ? "white" : "#0D275E"}
-                        fontSize={16}
+              {availableSlots.length === 0 ? (
+                <Typography textAlign={"center"} fontSize={16}>
+                  Нет доступных талонов
+                </Typography>
+              ) : (
+                <Grid>
+                  {availableSlots.map((slot) => {
+                    const selected = slot.time === selectedTime;
+                    return (
+                      <TimeElement
+                        key={`time-${slot.time}`}
+                        onClick={() => setSelectedTime(slot.time)}
+                        selected={selected}
                       >
-                        {slot.time}
-                      </Typography>
-                    </TimeElement>
-                  );
-                })}
-              </Grid>
+                        <Typography
+                          color={selected ? "white" : "#0D275E"}
+                          fontSize={16}
+                        >
+                          {slot.time}
+                        </Typography>
+                      </TimeElement>
+                    );
+                  })}
+                </Grid>
+              )}
             </Card>
           </>
         )}
