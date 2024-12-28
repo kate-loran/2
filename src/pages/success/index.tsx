@@ -10,38 +10,54 @@ import { format } from "date-fns";
 import { useEffect, useRef } from "react";
 import { toPng } from "html-to-image";
 
+const filter = (node: HTMLElement) => {
+  const exclusionClasses = ["remove-me", "secret-div"];
+  return !exclusionClasses.some((classname) =>
+    node.classList?.contains(classname),
+  );
+};
+
 const SuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const ref = useRef();
 
+  const upload = async () => {
+    const res = await toPng(ref.current, {
+      backgroundColor: "#113d9e",
+      filter,
+    });
+    const a = document.createElement("a");
+    a.href = res;
+    a.download = `запись.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await toPng(ref.current);
-      const a = document.createElement("a");
-      a.href = res;
-      a.download = `запись.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    };
-    fetchData();
+    upload();
   }, []);
 
   return (
-    <Wrapper ref={ref}>
-      <SuccessImage />
-      <Typography
-        color={"white"}
-        fontWeight={600}
-        fontSize={20}
-        textAlign={"center"}
-      >
-        Запись на прием{" "}
-        {format(location.state?.selectedDate, "dd LLLL", { locale: ru })} в{" "}
-        {location.state?.selectedTime} успешно завершена!
-      </Typography>
+    <Container>
+      <Wrapper ref={ref}>
+        <SuccessImage />
+        <Typography
+          color={"white"}
+          fontWeight={600}
+          fontSize={20}
+          textAlign={"center"}
+        >
+          Запись на прием{" "}
+          {format(location.state?.selectedDate, "dd LLLL", { locale: ru })} в{" "}
+          {location.state?.selectedTime} успешно завершена!
+        </Typography>
+        <div style={{ width: "100%" }} className={"remove-me"}>
+          <Button title={"Выгрузить талон"} onClick={upload} />
+        </div>
+      </Wrapper>
       <ButtonWrapper>
         <Card borderRadius={"35px 35px 0 0"}>
           <Button
@@ -50,12 +66,18 @@ const SuccessPage = () => {
           />
         </Card>
       </ButtonWrapper>
-    </Wrapper>
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
   background: #113d9e;
+`;
+
+const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
