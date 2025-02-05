@@ -1,5 +1,5 @@
 import { useGetDayDetails } from "../../hooks/useGetDayDetails.ts";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../component/header";
 import { addMinutes, format } from "date-fns";
 import { routes } from "../../config/routes.ts";
@@ -11,9 +11,10 @@ import { handleDateSetTime } from "../../utils/generateTimeSlots.ts";
 
 const AdminRecordsToday = () => {
   const navigate = useNavigate();
-  const { data } = useGetDayDetails({ date: new Date() });
+  const location = useLocation();
+  const { data } = useGetDayDetails({ date: location?.state?.currentDate });
 
-  if (!data) return null;
+  if (!data || !location?.state?.currentDate) return null;
   const slots = data?.slots;
   const isWorkingDay = slots && slots?.length > 0;
   const lastSlot = slots?.[slots?.length - 1];
@@ -27,7 +28,7 @@ const AdminRecordsToday = () => {
   return (
     <>
       <Header
-        title={`Сегодня, ${format(new Date(), "dd.MM.yyyy")} г.`}
+        title={`${format(location?.state?.currentDate, "dd.MM.yyyy")} г.`}
         onBack={() => navigate(routes.admin.path)}
       />
       <ContentLayout>

@@ -54,6 +54,25 @@ const SuccessPage = () => {
           {format(location.state?.selectedDate, "dd LLLL", { locale: ru })} в{" "}
           {location.state?.selectedTime} успешно завершена!
         </Typography>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+          }}
+          className={"remove-me"}
+        >
+          <Link target="_blank" href="https://disk.yandex.ru/i/-8ejf26phPCNjg">
+            Анкета
+          </Link>
+          <Link target="_blank" href="https://disk.yandex.ru/i/V00d-ZUWUAHSwA">
+            Информированное добровольное согласие
+          </Link>
+          <Link target="_blank" href="https://disk.yandex.ru/i/_iDS1YwPkd7duQ">
+            Согласие
+          </Link>
+        </div>
         <div style={{ width: "100%" }} className={"remove-me"}>
           <Button title={"Выгрузить талон"} onClick={upload} />
         </div>
@@ -92,6 +111,10 @@ const ButtonWrapper = styled.div`
   position: absolute;
   width: 100%;
   bottom: 0;
+`;
+
+const Link = styled.a`
+  color: white;
 `;
 
 export default SuccessPage;

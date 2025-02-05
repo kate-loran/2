@@ -19,18 +19,17 @@ import LongArrow from "../../assets/icons/longArrow.tsx";
 
 const AdminPage = () => {
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState<Date>();
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   const { data } = useGetDaysPeriod(getStartEndOfMonth(currentDate));
-  const { data: dataDetails } = useGetDayDetails({ date: new Date() });
+  const { data: dataDetails } = useGetDayDetails({ date: currentDate });
 
   const availableDates = getAvailableDates({
     dates: data as DayInterface[],
   });
 
-  const recordsCount = dataDetails?.slots?.filter(
-    (el) => el.available === false,
-  )?.length;
+  const recordsCount =
+    dataDetails?.slots?.filter((el) => el.available === false)?.length || 0;
 
   return (
     <>
@@ -40,32 +39,34 @@ const AdminPage = () => {
           <Calendar
             setCurrentDate={setCurrentDate}
             availableDates={availableDates}
+            selectedDate={currentDate}
+            onSelect={setCurrentDate}
           />
         </Card>
-        {dataDetails && (
-          <Card>
-            <RecordsWrapper>
-              <RecordsInfo>
-                <Typography color={"#0D275E"} fontSize={16} fontWeight={600}>
-                  {recordsCount}{" "}
-                  {getPluralLabel(recordsCount, [
-                    "запись",
-                    "записи",
-                    "записей",
-                  ])}
-                </Typography>
-                <Typography color={"rgba(12, 42, 106, 0.5)"} fontSize={14}>
-                  Сегодня, {format(new Date(), "dd.MM.yyyy")} г.
-                </Typography>
-              </RecordsInfo>
-              {recordsCount ? (
-                <Circle onClick={() => navigate(routes.adminRecordsToday.path)}>
-                  <LongArrow color={"white"} rotate={180} />
-                </Circle>
-              ) : null}
-            </RecordsWrapper>
-          </Card>
-        )}
+        <Card>
+          <RecordsWrapper>
+            <RecordsInfo>
+              <Typography color={"#0D275E"} fontSize={16} fontWeight={600}>
+                {recordsCount}{" "}
+                {getPluralLabel(recordsCount, ["запись", "записи", "записей"])}
+              </Typography>
+              <Typography color={"rgba(12, 42, 106, 0.5)"} fontSize={14}>
+                {format(currentDate, "dd.MM.yyyy")} г.
+              </Typography>
+            </RecordsInfo>
+            {recordsCount ? (
+              <Circle
+                onClick={() =>
+                  navigate(routes.adminRecordsToday.path, {
+                    state: { currentDate },
+                  })
+                }
+              >
+                <LongArrow color={"white"} rotate={180} />
+              </Circle>
+            ) : null}
+          </RecordsWrapper>
+        </Card>
       </ContentLayout>
       <Card borderRadius={"35px 35px 0 0"}>
         <Button
